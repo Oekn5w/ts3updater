@@ -10,6 +10,8 @@ tsdir='/home/oekn5w/teamspeak3-server_linux_amd64'
 startscript='/etc/init.d/teamspeak'
 backupscript="tar -cjf /home/oekn5w/backup-$(date -I).tar.bz2 -C /home/Oekn5w teamspeak3-server_linux_amd64"
 
+USER='Oekn5w'
+
 cd "$(dirname "$0")" || exit 1
 
 # check whether the dependencies curl, jq, and tar are installed
@@ -76,7 +78,7 @@ if [ "$old_version" != "$version" ]; then
 	while [ "$i" -le "$n" ]; do
 		link=$(printf '%s' "$links" | sed -n "$i"p)
 		echo "Downloading the file $link"
-		curl -Lo "$tmpfile" "$link"
+		su $USER -c "curl -Lo '$tmpfile' '$link'"
 		if [ $? = 0 ]; then
 			i=$(( n + 1 ))
 		else
@@ -111,11 +113,11 @@ if [ "$old_version" != "$version" ]; then
 		fi
 
 		if [ "$backupscript" != "" ]; then
-			$backupscript
+			su $USER -c "$backupscript"
 		fi
 
 		# extract the archive into the installation directory and overwrite existing files
-		tar --strip-components 1 -xf "$tmpfile" "$tsdir"
+		su $USER -c "tar --strip-components 1 -xf '$tmpfile' '$tsdir'"
 		if [ "$1" != '--dont-start' ] && [ "$server_stopped" != true ]; then
 			$startscript start
 		fi
