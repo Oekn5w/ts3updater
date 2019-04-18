@@ -1,9 +1,14 @@
 #!/bin/sh
 # Script Name: ts3updater.sh
-# Author: eminga
+# Author: eminga, amended by Oekn5w
 # Version: 1.6
 # Description: Installs and updates TeamSpeak 3 servers
 # License: MIT License
+
+# change specific to your system
+tsdir='/home/oekn5w/teamspeak3-server_linux_amd64'
+startscript='/etc/init.d/teamspeak'
+backupscript="tar -cjf /home/oekn5w/backup-$(date -I).tar.bz2 -C /home/Oekn5w teamspeak3-server_linux_amd64"
 
 cd "$(dirname "$0")" || exit 1
 
@@ -45,8 +50,8 @@ fi
 server=$(curl -Ls 'https://www.teamspeak.com/versions/server.json' | jq "$jqfilter")
 
 # determine installed version by parsing the most recent entry of the CHANGELOG file
-if [ -e 'CHANGELOG' ]; then
-	old_version=$(grep -Eom1 'Server Release \S*' "CHANGELOG" | cut -b 16-)
+if [ -e "${tsdir}/CHANGELOG" ]; then
+	old_version=$(grep -Eom1 'Server Release \S*' "${tsdir}/CHANGELOG" | cut -b 16-)
 else
 	old_version='-1'
 fi
@@ -92,23 +97,27 @@ if [ "$old_version" != "$version" ]; then
 	fi
 
 	if [ "$checksum" = "$sha256" ]; then
-		if [ -e "ts3server_startscript.sh" ]; then
+		if [ -e "${tsdir}/ts3server_startscript.sh" ]; then
 			# check if server is running
 			if [ -e 'ts3server.pid' ]; then
-				./ts3server_startscript.sh stop
+				$startscript stop
 			else
 				server_stopped=true
 			fi
 		else
-			mkdir "$tsdir" || { echo 'Could not create installation directory. If you wanted to upgrade an existing installation, make sure to place this script INSIDE the existing installation directory.' 1>&2; rm "$tmpfile"; exit 1; }
-			cd "$tsdir" && mv ../"$(basename "$0")" .
+			echo 'given ts3 path is invalid'
+			rm "$tmpfile"
+			exit 1
+		fi
+
+		if [ "$backupscript" != "" ]; then
+			$backupscript
 		fi
 
 		# extract the archive into the installation directory and overwrite existing files
 		tar --strip-components 1 -xf "$tmpfile" "$tsdir"
-		touch .ts3server_license_accepted
 		if [ "$1" != '--dont-start' ] && [ "$server_stopped" != true ]; then
-			./ts3server_startscript.sh start "$@"
+			$startscript start
 		fi
 	else
 		echo 'Checksum of downloaded file is incorrect!' 1>&2
