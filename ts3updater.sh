@@ -92,18 +92,7 @@ if [ "$old_version" != "$version" ]; then
 	fi
 
 	if [ "$checksum" = "$sha256" ]; then
-		tsdir=$(tar -tf "$tmpfile" | grep -m1 /)
-		if [ ! -e '.ts3server_license_accepted' ]; then
-			# display server license
-			tar --to-stdout -xf "$tmpfile" "$tsdir"LICENSE
-			echo -n "Accept license agreement (y/N)? "
-			read answer
-			if ! echo "$answer" | grep -iq "^y" ; then
-				rm "$tmpfile"
-				exit 1
-			fi
-		fi
-		if [ -e 'ts3server_startscript.sh' ]; then
+		if [ -e "ts3server_startscript.sh" ]; then
 			# check if server is running
 			if [ -e 'ts3server.pid' ]; then
 				./ts3server_startscript.sh stop
