@@ -70,7 +70,7 @@ if [ "$old_version" != "$version" ]; then
 		links=$(printf '%s' "$links" | shuf)
 	fi
 
-	tmpfile=$(mktemp "${TMPDIR:-/tmp}/ts3updater.XXXXXXXXXX")
+	tmpfile=$(su $USER mktemp "${TMPDIR:-/tmp}/ts3updater.XXXXXXXXXX")
 	i=1
 	n=$(printf '%s\n' "$links" | wc -l)
 
