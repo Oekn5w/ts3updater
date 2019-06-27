@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Script Name: ts3updater.sh
 # Author: eminga, amended by Oekn5w
 # Version: 1.6
