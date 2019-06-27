@@ -8,7 +8,7 @@
 # change specific to your system
 tsdir='/home/oekn5w/teamspeak3-server_linux_amd64'
 startscript='/etc/init.d/teamspeak'
-backupscript="tar -cjf /home/oekn5w/backup-$(date -I).tar.bz2 -C /home/Oekn5w teamspeak3-server_linux_amd64"
+backupscript='tar -cjf /home/oekn5w/backup-$(date -I).tar.bz2 -C /home/oekn5w/teamspeak3-server_linux_amd64'
 
 USER='Oekn5w'
 
