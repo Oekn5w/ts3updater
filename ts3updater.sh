@@ -12,7 +12,7 @@ backupscript='tar -cjf /home/oekn5w/backup-$(date -I).tar.bz2 -C /home/oekn5w te
 
 USER='oekn5w'
 
-cd '$(dirname "$0")' || exit 1
+cd "$tsdir" || exit 1
 
 # check whether the dependencies curl, jq, and tar are installed
 if ! command -v curl > /dev/null 2>&1; then
@@ -99,6 +99,7 @@ if [ "$old_version" != "$version" ]; then
 	fi
 
 	if [ "$checksum" = "$sha256" ]; then
+		tsdir_tar=$(tar -tf "$tmpfile" | grep -m1 /)
 		if [ -e "${tsdir}/ts3server_startscript.sh" ]; then
 			# check if server is running
 			if [ -e 'ts3server.pid' ]; then
@@ -117,7 +118,7 @@ if [ "$old_version" != "$version" ]; then
 		fi
 
 		# extract the archive into the installation directory and overwrite existing files
-		su $USER -c "tar --strip-components 1 -xf '$tmpfile' '$tsdir'"
+		su $USER -c "tar --strip-components 1 -xf '$tmpfile' '$tsdir_tar'"
 		if [ "$1" != '--dont-start' ] && [ "$server_stopped" != true ]; then
 			$startscript start
 		fi
