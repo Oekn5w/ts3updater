@@ -10,9 +10,9 @@ tsdir='/home/oekn5w/teamspeak3-server_linux_amd64'
 startscript='/etc/init.d/teamspeak'
 backupscript='tar -cjf /home/oekn5w/backup-$(date -I).tar.bz2 -C /home/oekn5w/teamspeak3-server_linux_amd64'
 
-USER='Oekn5w'
+USER='oekn5w'
 
-cd "$(dirname "$0")" || exit 1
+cd '$(dirname "$0")' || exit 1
 
 # check whether the dependencies curl, jq, and tar are installed
 if ! command -v curl > /dev/null 2>&1; then
